@@ -1,0 +1,4 @@
+registration_create:
+  path: "/api/register"
+  controller: App\Controller\RegistrationController::register
+  methods: [POST]
