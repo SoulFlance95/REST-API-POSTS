@@ -45,7 +45,7 @@ class PostsController extends AbstractController
 
         // Renvoie une réponse si tout est OK
 
-        return new JsonResponse(array('status' => 'Le post a été créé', 200));
+        return new Response('Le post a été créés');
 
     }
 
