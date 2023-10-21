@@ -43,12 +43,9 @@ class PostsController extends AbstractController
         // Utilisez le PostService pour créer une entité de post
         $post = $this->postService->createPost($data);
 
-        if ($post) {
-        }
-
         // Renvoie une réponse si tout est OK
 
-        return new Response('The post was created successfully');
+        return new JsonResponse(array('status' => 'Le post a été créé', 200));
 
     }
 
