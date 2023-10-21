@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use Lexik\Bundle\JWTAuthenticationBundle\Encoder\JWTEncoderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -14,16 +15,22 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use src\Controller\UserController;
 use Doctrine\Persistence\ManagerRegistry as PersistenceManagerRegistry;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 
 
 class RegistrationController extends AbstractController
 {
-    #[Route('/api/register', name: 'app_registration', methods: 'GET')]
 
-    public function register(Request $request, UserPasswordHasherInterface $passwordManager, JWTEncoderInterface $jWTEncoderInterface, PersistenceManagerRegistry $doctrine)
+
+
+    #[Route('/api/register', name: 'user_registration', methods: 'GET')]
+
+    public function register(Request $request, UserPasswordHasherInterface $passwordManager, JWTEncoderInterface $jWTEncoderInterface, TokenStorageInterface $tokenStorage, ManagerRegistry $doctrine)
     {
 
+
+        var_dump($request->getContent());
 
         $data = json_decode($request->getContent(), true);
 
@@ -42,8 +49,14 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
+            $userData = [
+                'email' => $user->getEmail(),
+                'Password' => $user->getPassword()
+                // Add any other user data you want in the JWT
+            ];
+
             // Encoder un jeton JWT avec les données utilisateur
-            $token = $jWTEncoderInterface->encode(array($user));
+            $token = $jWTEncoderInterface->encode(array($userData));
 
             // Renvoie une réponse JSON contenant le jeton
             return new JsonResponse(array('token' => $token));
@@ -56,4 +69,9 @@ class RegistrationController extends AbstractController
         }
 
     }
+
+
+
 }
+
+

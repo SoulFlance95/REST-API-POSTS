@@ -28,7 +28,7 @@ class PostsController extends AbstractController
 
 
     #[Route('/create-posts', name: 'create_posts', methods: ['GET'])]
-    public function createPost(Request $request)
+    public function createAllPosts(Request $request)
     {
 
         // Décode les données JSON du contenu de la requête
@@ -56,6 +56,8 @@ class PostsController extends AbstractController
 
         // Récupèrer tous les Posts
         $posts = $this->postService->getAllPosts();
+
+
 
 
         if (!$posts) {

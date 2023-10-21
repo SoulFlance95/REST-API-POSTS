@@ -41,27 +41,22 @@ class PostService
 
     public function createPost(array $data): ?Posts
     {
-
         // Création d'une entité Post
-
-        $posts = new Posts();
-        $posts->setTitle($data['title'])
+        $post = new Posts();
+        $post->setTitle($data['title'])
             ->setDescription($data['description']);
 
-
         // Sauvegarder l'entité dans la base de données
+        $this->entityManager->persist($post);
 
-        $this->entityManager->persist($posts);
+        // Flush the changes to the database
         $this->entityManager->flush();
 
-        if ($this->entityManager->flush()) {
-            $this->sendEmail($posts);
-        }
+        // Send an email after the entity is successfully persisted
+        $this->sendEmail($post);
 
         // Récupération des données de l'entité Post
-        return $posts;
-
-
+        return $post;
     }
 
 
@@ -80,6 +75,8 @@ class PostService
         // Récupération de toutes les entités Post dans la base de données
 
         return $this->entityManager->getRepository(Posts::class)->findAll();
+
+
 
     }
 }
