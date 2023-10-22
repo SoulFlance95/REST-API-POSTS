@@ -24,7 +24,7 @@ class RegistrationController extends AbstractController
 
 
 
-    #[Route('/api/register', name: 'user_registration')]
+    #[Route('/api/register', name: 'user_registration', methods: 'POST')]
 
     public function register(Request $request, UserPasswordHasherInterface $passwordManager, JWTEncoderInterface $jWTEncoderInterface, TokenStorageInterface $tokenStorage, ManagerRegistry $doctrine)
     {
