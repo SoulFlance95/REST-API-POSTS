@@ -24,49 +24,42 @@ class RegistrationController extends AbstractController
 
 
 
-    #[Route('/api/register', name: 'user_registration', methods: 'GET')]
+    #[Route('/api/register', name: 'user_registration')]
 
     public function register(Request $request, UserPasswordHasherInterface $passwordManager, JWTEncoderInterface $jWTEncoderInterface, TokenStorageInterface $tokenStorage, ManagerRegistry $doctrine)
     {
+        // Récupère le Doctrine Entity Manager
 
-
-        var_dump($request->getContent());
+        $entityManager = $doctrine->getManager();
 
         $data = json_decode($request->getContent(), true);
 
         // Vérifiez si les clés 'email' et 'mot de passe' sont présentes dans la BDD
-        if (isset($data['email']) && isset($data['password'])) {
-            $user = new User();
 
-            // Définir l'email et le mot de passe de l'utilisateur
-            $user->setEmail($data['email'])
-                ->setPassword(sha1($data['password']));
+        $user = new User();
 
-            // Récupère le Doctrine Entity Manager
-            $entityManager = $doctrine->getManager();
+        // Définir l'email et le mot de passe de l'utilisateur
+        $user->setEmail($request->get('email'))
+            ->setPassword(sha1($request->get('password')));
 
-            // Conserver l'entité utilisateur dans la base de données
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            $userData = [
-                'email' => $user->getEmail(),
-                'Password' => $user->getPassword()
-                // Add any other user data you want in the JWT
-            ];
-
-            // Encoder un jeton JWT avec les données utilisateur
-            $token = $jWTEncoderInterface->encode(array($userData));
-
-            // Renvoie une réponse JSON contenant le jeton
-            return new JsonResponse(array('token' => $token));
-
-        } else {
+        $data = array(
+            'email' => $user->getEmail(),
+            'password' => $user->getPassword(),
+        );
 
 
-            return new JsonResponse(null, 404);
 
-        }
+        // Conserver l'entité utilisateur dans la base de données
+        $entityManager->persist($user);
+        $entityManager->flush();
+
+
+        // Encodage du Token
+        $token = $jWTEncoderInterface->encode($data);
+
+        return new JsonResponse(['token' => $token]);
+
+
 
     }
 

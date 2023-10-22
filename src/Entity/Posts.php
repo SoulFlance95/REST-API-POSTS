@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\PostRepository;
+use App\Repository\PostsRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: PostRepository::class)]
+#[ORM\Entity(repositoryClass: PostsRepository::class)]
 class Posts
 {
     #[ORM\Id]
@@ -13,25 +13,9 @@ class Posts
     #[ORM\Column]
     private ?int $id = null;
 
-    private string $title;
-
-    private string $description;
-
-
-
-    public function setTitle(string $title): static
-    {
-        $this->title = $title;
-
-        return $this;
-    }
-
-    public function setDescription(string $description): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $title = null;
+    private ?string $description = null;
 
     public function getId(): ?int
     {
@@ -43,11 +27,22 @@ class Posts
         return $this->title;
     }
 
-    public function getDescription(): ?string
+    public function setTitle(?string $title): static
     {
-        return $this->title;
+        $this->title = $title;
+
+        return $this;
     }
 
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
 
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
+        return $this;
+    }
 }
