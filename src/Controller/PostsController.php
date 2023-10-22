@@ -7,6 +7,7 @@ use App\Service\PostService; // Importe la classe PostService
 
 use Doctrine\ORM\EntityManagerInterface; // Importe l'EntityManagerInterface de Doctrine
 use Doctrine\Persistence\ManagerRegistry; // Importe le ManagerRegistry de Doctrine
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; // Importe la classe AbstractController de Symfony
 use Symfony\Component\HttpFoundation\JsonResponse; // Importe la classe JsonResponse de Symfony
 use Symfony\Component\HttpFoundation\Request; // Importe la classe Request de Symfony
@@ -56,7 +57,7 @@ class PostsController extends AbstractController
         $post = $this->postService->createPost($data);
 
         if ($post) {
-            $this->sendMail($mailer, $post);
+            $this->sendMail($mailer);
         }
 
         // Renvoyez les données du post créé sous forme de réponse JSON
@@ -105,18 +106,23 @@ class PostsController extends AbstractController
     }
 
     #[Route('/send-email', name: 'app_send_email')]
-    public function sendMail(MailerInterface $mailer, $post)
+    public function sendMail(MailerInterface $mailer)
     {
         $email = (new Email())
             ->from('sedare2017@gmail.com')
             ->to('team@devphantom.com')
             ->subject('Nouveau post')
-            ->text('Le post a été créé: ' . $post->getTitle());
+            ->text('Le post a été créé: ');
 
-        $mailer->send($email);
-        return new Response(
-            'Le mail a été envoyé avec succés',
-        );
+        try {
+
+            $mailer->send($email);
+            return new Response('Le mail a été envoyé avec succès', 200);
+
+        } catch (Exception $e) {
+            return new Response('Une erreur s\'est produite lors de l\'envoi du mail : ' . $e->getMessage(), 500);
+        }
+
 
 
     }
