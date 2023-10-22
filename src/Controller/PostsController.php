@@ -34,7 +34,7 @@ class PostsController extends AbstractController
         $this->entityManager = $entityManager; // Injecte l'EntityManager pour interagir avec la base de données
     }
 
-    #[Route('/create-posts', name: 'app_posts')]
+    #[Route('/create-posts', name: 'app_posts', methods: 'POST')]
     public function create(ManagerRegistry $doctrine, Request $request)
     {
         // Cette méthode gère la création d'un nouveau post en utilisant les données fournies dans la requête.
@@ -61,7 +61,7 @@ class PostsController extends AbstractController
         ], JsonResponse::HTTP_OK);
     }
 
-    #[Route('/posts', name: 'posts')]
+    #[Route('/posts', name: 'posts', methods: 'GET')]
     public function viewPosts(ManagerRegistry $doctrine)
     {
         // Cette méthode récupère tous les posts depuis la base de données et les renvoie sous forme de réponse JSON.
@@ -82,7 +82,7 @@ class PostsController extends AbstractController
         return new JsonResponse($data, 200);
     }
 
-    #[Route('/posts/{id}', name: 'post')]
+    #[Route('/posts/{id}', name: 'post', methods: 'GET')]
     public function viewPost(ManagerRegistry $doctrine, int $id)
     {
         // Cette méthode récupère un post spécifique en fonction de l'ID fourni dans l'URL et le renvoie sous forme de réponse JSON.

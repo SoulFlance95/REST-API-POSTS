@@ -28,10 +28,8 @@ class RegistrationController extends AbstractController
 
     public function register(Request $request, UserPasswordHasherInterface $passwordManager, JWTEncoderInterface $jWTEncoderInterface, TokenStorageInterface $tokenStorage, ManagerRegistry $doctrine)
     {
-        // Récupère le Doctrine Entity Manager
 
         $entityManager = $doctrine->getManager();
-
         $data = json_decode($request->getContent(), true);
 
         // Vérifiez si les clés 'email' et 'mot de passe' sont présentes dans la BDD
@@ -39,14 +37,13 @@ class RegistrationController extends AbstractController
         $user = new User();
 
         // Définir l'email et le mot de passe de l'utilisateur
-        $user->setEmail($request->get('email'))
+        $user->setEmail($request->get('username'))
             ->setPassword(sha1($request->get('password')));
 
         $data = array(
-            'email' => $user->getEmail(),
+            'username' => $user->getEmail(),
             'password' => $user->getPassword(),
         );
-
 
 
         // Conserver l'entité utilisateur dans la base de données

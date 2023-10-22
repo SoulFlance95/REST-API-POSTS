@@ -3,4 +3,4 @@ controllers:
   type: attribute
 
 api_login_check:
-  path: /authentication_token
+  path: /api/login_check
