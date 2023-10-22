@@ -11,6 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; // Importe la 
 use Symfony\Component\HttpFoundation\JsonResponse; // Importe la classe JsonResponse de Symfony
 use Symfony\Component\HttpFoundation\Request; // Importe la classe Request de Symfony
 use Symfony\Component\HttpFoundation\Response; // Importe la classe Response de Symfony
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route; // Importe la classe Route de Symfony
 
 class PostsController extends AbstractController
@@ -35,7 +37,7 @@ class PostsController extends AbstractController
     }
 
     #[Route('/create-posts', name: 'app_posts', methods: 'POST')]
-    public function create(ManagerRegistry $doctrine, Request $request)
+    public function create(ManagerRegistry $doctrine, Request $request, MailerInterface $mailer)
     {
         // Cette méthode gère la création d'un nouveau post en utilisant les données fournies dans la requête.
 
@@ -52,6 +54,10 @@ class PostsController extends AbstractController
 
         // Utiliser le service PostService pour créer le post en base de données
         $post = $this->postService->createPost($data);
+
+        if ($post) {
+            $this->sendMail($mailer, $post);
+        }
 
         // Renvoyez les données du post créé sous forme de réponse JSON
         return $this->json([
@@ -96,5 +102,22 @@ class PostsController extends AbstractController
 
         // Renvoyer les données du post sous forme de réponse JSON
         return new JsonResponse($data, 200);
+    }
+
+    #[Route('/send-email', name: 'app_send_email')]
+    public function sendMail(MailerInterface $mailer, $post)
+    {
+        $email = (new Email())
+            ->from('sedare2017@gmail.com')
+            ->to('team@devphantom.com')
+            ->subject('Nouveau post')
+            ->text('Le post a été créé: ' . $post->getTitle());
+
+        $mailer->send($email);
+        return new Response(
+            'Le mail a été envoyé avec succés',
+        );
+
+
     }
 }
