@@ -18,15 +18,6 @@ use Symfony\Component\Routing\Annotation\Route; // Importe la classe Route de Sy
 
 class PostsController extends AbstractController
 {
-    #[Route('/posts', name: 'app_posts')]
-    public function index(): Response
-    {
-        // Cette méthode gère la page d'accueil, mais elle ne fait rien d'autre que de renvoyer une vue HTML.
-        return $this->render('posts/index.html.twig', [
-            'controller_name' => 'PostsController',
-        ]);
-    }
-
     private $postService; // Propriété pour stocker une instance de PostService
     private $entityManager; // Propriété pour stocker une instance de EntityManagerInterface
 
@@ -36,6 +27,17 @@ class PostsController extends AbstractController
         $this->postService = $postService; // Injecte le service de gestion de posts
         $this->entityManager = $entityManager; // Injecte l'EntityManager pour interagir avec la base de données
     }
+
+
+      #[Route('/posts', name: 'app_posts')]
+    public function index(): Response
+    {
+        // Cette méthode gère la page d'accueil, mais elle ne fait rien d'autre que de renvoyer une vue HTML.
+        return $this->render('posts/index.html.twig', [
+            'controller_name' => 'PostsController',
+        ]);
+    }
+
 
     #[Route('/create-posts', name: 'app_posts', methods: 'POST')]
     public function create(ManagerRegistry $doctrine, Request $request, MailerInterface $mailer)
