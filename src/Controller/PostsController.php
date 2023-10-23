@@ -2,19 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Posts; 
-use App\Service\PostService; 
+use App\Entity\Posts;
+use App\Service\PostService;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\Persistence\ManagerRegistry; 
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; 
-use Symfony\Component\HttpFoundation\JsonResponse; 
-use Symfony\Component\HttpFoundation\Request; 
-use Symfony\Component\HttpFoundation\Response; 
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\Routing\Annotation\Route; 
+use Symfony\Component\Routing\Annotation\Route;
 
 class PostsController extends AbstractController
 {
@@ -29,7 +29,7 @@ class PostsController extends AbstractController
     }
 
 
-      #[Route('/posts', name: 'app_posts')]
+    #[Route('/posts', name: 'app_posts')]
     public function index(): Response
     {
         // Cette méthode gère la page d'accueil, mais elle ne fait rien d'autre que de renvoyer une vue HTML.
@@ -42,21 +42,11 @@ class PostsController extends AbstractController
     #[Route('/create-posts', name: 'app_posts', methods: 'POST')]
     public function create(ManagerRegistry $doctrine, Request $request, MailerInterface $mailer)
     {
-        // Cette méthode gère la création d'un nouveau post en utilisant les données fournies dans la requête.
 
-        $datapost = new Posts(); // Crée une nouvelle instance de l'entité Posts
-        $datapost->setTitle($request->get('title')); // Récupère le titre depuis la requête et l'assigne à l'entité
-        $datapost->setDescription($request->get('description')); // Récupère la description depuis la requête et l'assigne à l'entité
 
-        // Création d'un tableau de données à partir de l'entité
-        $data = array(
-            'id' => $datapost->getId(),
-            'title' => $datapost->getTitle(),
-            'description' => $datapost->getDescription(),
-        );
 
         // Utiliser le service PostService pour créer le post en base de données
-        $post = $this->postService->createPost($data);
+        $post = $this->postService->createPost($request->request->all());
 
         if ($post) {
             $this->sendMail($mailer);
