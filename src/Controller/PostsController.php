@@ -2,19 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Posts; // Importe la classe Posts
-use App\Service\PostService; // Importe la classe PostService
+use App\Entity\Posts; 
+use App\Service\PostService; 
 
-use Doctrine\ORM\EntityManagerInterface; // Importe l'EntityManagerInterface de Doctrine
-use Doctrine\Persistence\ManagerRegistry; // Importe le ManagerRegistry de Doctrine
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry; 
 use Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; // Importe la classe AbstractController de Symfony
-use Symfony\Component\HttpFoundation\JsonResponse; // Importe la classe JsonResponse de Symfony
-use Symfony\Component\HttpFoundation\Request; // Importe la classe Request de Symfony
-use Symfony\Component\HttpFoundation\Response; // Importe la classe Response de Symfony
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController; 
+use Symfony\Component\HttpFoundation\JsonResponse; 
+use Symfony\Component\HttpFoundation\Request; 
+use Symfony\Component\HttpFoundation\Response; 
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\Routing\Annotation\Route; // Importe la classe Route de Symfony
+use Symfony\Component\Routing\Annotation\Route; 
 
 class PostsController extends AbstractController
 {
