@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Posts;
+use App\Form\PostType;
 use App\Service\PostService;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -38,27 +39,42 @@ class PostsController extends AbstractController
         ]);
     }
 
-
-    #[Route('/create-posts', name: 'app_posts', methods: 'POST')]
+    #[Route('/create-posts', name: 'app_posts', methods: ['POST'])]
     public function create(ManagerRegistry $doctrine, Request $request, MailerInterface $mailer)
     {
+        // Crée une nouvelle instance de l'entité Posts
+        $post = new Posts();
 
+        // Crée un formulaire basé sur le type de formulaire PostType et associe-le à l'entité $post
+        $form = $this->createForm(PostType::class, $post);
 
+        // Récupère les données de la requête POST
+        $data = $request->request->all();
 
-        // Utiliser le service PostService pour créer le post en base de données
-        $post = $this->postService->createPost($request->request->all());
+        // Soumet les données du formulaire
+        $form->submit($data);
 
-        if ($post) {
-            $this->sendMail($mailer);
+        // Vérifie si le formulaire a été soumis et est valide
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Appelle la méthode du service pour créer un post en utilisant les données de la requête
+            $this->postService->createPost($request->request->all());
+
+            // Renviue une réponse JSON avec un message de confirmation
+            return new JsonResponse(['status' => 'Le post a été créé avec succès'], Response::HTTP_CREATED);
         }
 
-        // Renvoyez les données du post créé sous forme de réponse JSON
-        return $this->json([
-            'id' => $post->getId(),
-            'title' => $post->getTitle(),
-            'description' => $post->getDescription(),
-        ], JsonResponse::HTTP_OK);
+        // En cas d'erreurs de validation du formulaire, génère un tableau d'erreurs
+        $errors = [];
+        foreach ($form->getErrors(true) as $error) {
+            $errors[] = $error->getMessage();
+        }
+
+        // Renvoie une réponse JSON avec un message d'erreur et les erreurs de validation
+        return new JsonResponse(['Une erreur est survenue' => $errors], Response::HTTP_BAD_REQUEST);
     }
+
+
+
 
     #[Route('/posts', name: 'posts', methods: 'GET')]
     public function viewPosts(ManagerRegistry $doctrine)
